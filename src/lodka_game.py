@@ -5,9 +5,10 @@ from typing import List
 
 import pygame
 
-from game_entities import Enemy, Plane, Torpedo
+from game_entities import Enemy_Ship, Plane, Torpedo
 from graphic import lodkaStand
 
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 clock = pygame.time.Clock()
 
 # background music
@@ -19,7 +20,10 @@ pygame.mixer.music.load("../music/sonar.mp3.mpg")
 pygame.mixer.music.play(1000, 0)
 
 # логирование
-logging.basicConfig(filename='logfile.log', level=logging.INFO)
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+log_file_path = os.path.join(project_root, 'logfile.log')
+
+logging.basicConfig(filename=log_file_path, level=logging.DEBUG)
 logging.info('GAME STARTED')
 
 # подгружаем изображения
@@ -175,19 +179,19 @@ while run:
             # launch torpedo
             torpedos.append(
                 Torpedo(
-                    round(lodka_x + lodka_width // 2),
-                    round(lodka_y + lodka_height // 2),
-                    'ordinary'
+                    x = round(lodka_x + lodka_width // 2),
+                    y = round(lodka_y + lodka_height // 2),
+                    object_type = 'ordinary'
                 )
             )
         if keys[pygame.K_o]:
             # create Enemy
             # logging.info("we added enemy to list")
-            enemies.append(Enemy(20, 87, 'ordinary'))
+            enemies.append(Enemy_Ship(20, 87, 'ordinary'))
         if keys[pygame.K_f]:
             # create Enemy
             # logging.info("we added enemy to list")
-            enemies.append(Enemy(20, 87, 'fast'))
+            enemies.append(Enemy_Ship(20, 87, 'fast'))
         if keys[pygame.K_p]:
             # create Plane
             logging.info("we added plane to list")

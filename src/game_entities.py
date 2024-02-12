@@ -1,10 +1,12 @@
+import logging
+
 import pygame
 
 from graphic import cargoStand, planeStand
 
 
 class DrawableObject:
-    def __init__(self, x, y, sprite=None):
+    def __init__(self, x: int, y: int, sprite=None):
         self.x = x
         self.y = y
         self.sprite = sprite
@@ -18,31 +20,21 @@ class DrawableObject:
 
 
 class Torpedo(DrawableObject):
-    def __init__(self, x: float, y: float, torpedo_type: str, sprite=None, vel: int = 8):
+    def __init__(self, x: int, y: int, object_type: str, sprite=None):
         super().__init__(x, y, sprite)
-        self.torpedo_type = torpedo_type
-        self.vel = vel
-
-
-class Torpedo_old:
-    def __init__(self, x, y, torpedo_type):
-        self.x = x
-        self.y = y
+        self.object_type = object_type
         self.vel = 8
-        self.type = torpedo_type
-
-    def draw(self, win):
-        pygame.draw.rect(win, (0, 0, 0), (self.x, self.y, 2, 5))
+        if self.object_type == 'fast':
+            self.vel = 16
 
 
-class Bomb:
-    def __init__(self, x, y, bomb_type):
-        self.x = x
-        self.y = y
+class Bomb(DrawableObject):
+    def __init__(self, x: int, y: int, object_type=None):
+        super().__init__(x, y, sprite=None)
         self.vel = 10
-
-    def draw(self, win):
-        pygame.draw.rect(win, (0, 0, 0), (self.x, self.y, 2, 5))
+        self.object_type = object_type
+        if self.object_type == 'fast':
+            self.vel = 20
 
 
 class Plane:
@@ -70,18 +62,16 @@ class Plane:
         return bombs
 
 
-class Enemy:
-    def __init__(self, x, y, type):
-        self.x = x
-        self.y = y
-        self.type = type
+class Enemy_Ship(DrawableObject):
+    def __init__(self, x, y, object_type='ordinary'):
+        super().__init__(x, y)
+        self.object_type = object_type
         self.size = 30
-        if self.type == 'ordinary':
-            self.vel = 5
-            self.size = 130
-        else:  # fast
+        self.vel = 5
+        self.size = 130
+        if object_type == 'fast':  # fast
             self.vel = 10
-            self.size = 130
 
     def draw(self, win):
+        logging.debug(f"x = {self.x}, y = {self.y}")
         win.blit(cargoStand, (self.x, self.y))
