@@ -5,25 +5,26 @@ from typing import List
 
 import pygame
 
-from graphic import cargoStand, lodkaStand
-from ships_and_enemies_classes import Plane, Torpedo
+from game_entities import Enemy, Plane, Torpedo
+from graphic import lodkaStand
 
 clock = pygame.time.Clock()
 
 # background music
 pygame.mixer.init()
-pygame.mixer.music.load("music/sonar.mp3.mpg")
+pygame.mixer.music.load("../music/sonar.mp3.mpg")
 # pygame.mixer.music.load("music/sonar2.mp3.mpg")
 # pygame.mixer.music.load("music/expl.mp3.mpg")
 
 pygame.mixer.music.play(1000, 0)
 
-# логгирование
+# логирование
 logging.basicConfig(filename='logfile.log', level=logging.INFO)
 logging.info('GAME STARTED')
 
 # подгружаем изображения
-images_folder = './images'
+images_folder = '../images'
+
 
 pygame.init()
 run = True
@@ -53,21 +54,7 @@ bombs: List = []
 score = 0
 
 
-class Enemy():
-    def __init__(self, x, y, type):
-        self.x = x
-        self.y = y
-        self.type = type
-        self.size = 30
-        if self.type == 'ordinary':
-            self.vel = 5
-            self.size = 130
-        else:  # fast
-            self.vel = 10
-            self.size = 130
 
-    def draw(self, win):
-        win.blit(cargoStand, (self.x, self.y))
 
 
 def drawWindow():
@@ -96,6 +83,7 @@ def drawBg():
 while run:
     clock.tick(10)  # better then : pygame.time.delay(100)
     for event in pygame.event.get():
+        # отвечает за нажатие на крестик в меню, не за ESC
         if event.type == pygame.QUIT:
             run = False
 

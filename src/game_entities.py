@@ -1,9 +1,30 @@
 import pygame
 
-from graphic import planeStand
+from graphic import cargoStand, planeStand
 
 
-class Torpedo:
+class DrawableObject:
+    def __init__(self, x, y, sprite=None):
+        self.x = x
+        self.y = y
+        self.sprite = sprite
+
+    def draw(self, win):
+        if self.sprite:
+            win.blit(self.sprite, (self.x, self.y))
+        else:
+            # Стандартная отрисовка, если спрайт не задан
+            pygame.draw.rect(win, (0, 0, 0), (self.x, self.y, 2, 5))
+
+
+class Torpedo(DrawableObject):
+    def __init__(self, x: float, y: float, torpedo_type: str, sprite=None, vel: int = 8):
+        super().__init__(x, y, sprite)
+        self.torpedo_type = torpedo_type
+        self.vel = vel
+
+
+class Torpedo_old:
     def __init__(self, x, y, torpedo_type):
         self.x = x
         self.y = y
@@ -41,9 +62,26 @@ class Plane:
         curr_time = pygame.time.get_ticks()
         if (curr_time - self.last_bomb) > 1000:
             self.last_bomb = curr_time
-            file = 'music/1_torpeda.mp3'
+            file = '../music/1_torpeda.mp3'
             pygame.mixer.music.load(file)
             pygame.mixer.music.set_volume(0.1)
             pygame.mixer.music.play()
             bombs.append(Bomb(self.x + self.width / 2, self.y + self.height, 'ordinary'))
         return bombs
+
+
+class Enemy:
+    def __init__(self, x, y, type):
+        self.x = x
+        self.y = y
+        self.type = type
+        self.size = 30
+        if self.type == 'ordinary':
+            self.vel = 5
+            self.size = 130
+        else:  # fast
+            self.vel = 10
+            self.size = 130
+
+    def draw(self, win):
+        win.blit(cargoStand, (self.x, self.y))
