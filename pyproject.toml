@@ -1,16 +1,19 @@
+# Эта секция определяет метаданные проекта, такие как имя, версия, описание, авторы и лицензия.
 [tool.poetry]
-name = "lodka_game"
+name = "submarine_pygame"
 version = "1.0.0"
-description = "lodka"
+description = "submarine game"
 authors = [
-    "tier1985@gmail.com",
+    "tier <tier1985@gmail.com>",
 ]
 license = "copyright tier"
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
+pygame = "^2.0.1"
 
+# Секция для зависимостей разработки, которые необходимы только для процесса разработки и не требуются в производственной среде.
 [tool.poetry.group.dev.dependencies]
 isort = "5.8.0"
 flake8 = "3.9.1"
