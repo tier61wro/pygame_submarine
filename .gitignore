@@ -31,4 +31,7 @@ env.bak/
 pythonvenv/
 myvenv/
 
+# Logs
+*.log
+
 
