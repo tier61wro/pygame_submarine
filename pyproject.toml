@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "lodka_game"
+version = "1.0.0"
+description = "lodka"
+authors = [
+    "tier1985@gmail.com",
+]
+license = "copyright tier"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev.dependencies]
+isort = "5.8.0"
+flake8 = "3.9.1"
+flake8-tuple-unpack-limit = "0.0.1"
+mypy = "0.812"
+ipython = "^8.8.0"
