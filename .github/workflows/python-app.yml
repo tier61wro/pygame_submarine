@@ -16,11 +16,11 @@ jobs:
 
     - name: Install Poetry
       run: |
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+        curl -sSL https://install.python-poetry.org | python3 -
 
     - name: Configure Poetry
       run: |
-        echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     - name: Install dependencies
       run: |
@@ -29,3 +29,4 @@ jobs:
     - name: Run tests
       run: |
         poetry run python -m unittest discover tests
+
