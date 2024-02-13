@@ -13,9 +13,8 @@ clock = pygame.time.Clock()
 
 # background music
 pygame.mixer.init()
-pygame.mixer.music.load("../music/sonar.mp3.mpg")
-# pygame.mixer.music.load("music/sonar2.mp3.mpg")
-# pygame.mixer.music.load("music/expl.mp3.mpg")
+pygame.mixer.music.load(os.path.join(project_root, "music/sonar.mp3.mpg"))
+
 
 pygame.mixer.music.play(1000, 0)
 
@@ -41,6 +40,7 @@ pygame.display.set_caption("submarine game")
 myfont = pygame.font.SysFont("monospace", 16)
 
 clock = pygame.time.Clock()
+BLACK = (0, 0, 0)
 
 # submarine params
 lodka_x = 50
@@ -48,8 +48,9 @@ lodka_y = 425
 lodka_width = 130
 lodka_height = 39
 lodka_speed = 10
-lodka_alive = 1
-double_speed = lodka_speed * 2
+submarine_alive = True
+
+horizont_level = 165
 
 torpedos: List = []
 enemies: List = []
@@ -58,13 +59,10 @@ bombs: List = []
 score = 0
 
 
-
-
-
-def drawWindow():
+def draw_window():
     global bombs
-    for torpeda in torpedos:
-        torpeda.draw(win)
+    for torpedo in torpedos:
+        torpedo.draw(win)
 
     for enemy in enemies:
         enemy.draw(win)
@@ -79,11 +77,11 @@ def drawWindow():
     pygame.display.update()
 
 
-def drawBg():
+def draw_bg():
     win.blit(bg, (0, 0))
 
 
-# MAIN LOOP START
+# MAIN GAME LOOP
 while run:
     clock.tick(10)  # better then : pygame.time.delay(100)
     for event in pygame.event.get():
@@ -92,53 +90,43 @@ while run:
             run = False
 
     disclaimer_text = myfont.render("Round 1", 1, (0, 0, 0))
-    gameover_text = myfont.render("GAME OVER", 1, (0, 0, 0))
+    game_over_text = myfont.render("GAME OVER", 1, (0, 0, 0))
     score_text = myfont.render("Score {0}".format(score), 1, (0, 0, 0))
     reload_text = myfont.render("Reloading in {0}".format('3'), 1, (0, 0, 0))
     currentColor = (255, 255, 255)
 
-    if lodka_alive == 0:
-        win.fill(currentColor)
-        win.blit(gameover_text, (5, 480))
-        pygame.display.update()
-        time.sleep(3)
-        run = False
-        break
-
-    else:
-        drawBg()
+    if submarine_alive:
+        # The game continues.
+        draw_bg()
         win.blit(disclaimer_text, (5, 480))
         win.blit(score_text, (5, 10))
         win.blit(reload_text, (win_width - 150, win_height - 20))
         win.blit(lodkaStand, (lodka_x, lodka_y))
+        pygame.draw.line(win, BLACK, (0, horizont_level), (win_width, horizont_level), 1)
 
         for torpedo in torpedos:
             for enemy in enemies:
-                if (torpedo.y < 95) and ((torpedo.x > enemy.x) and (torpedo.x < enemy.x + enemy.size)):
+                if torpedo.y < horizont_level and enemy.x < torpedo.x < enemy.x + enemy.width:
                     logging.info('enemy was killed')
                     score += 1
                     enemies.pop(enemies.index(enemy))
 
-            if torpedo.y < win_height and torpedo.y > 95:
+            if horizont_level < torpedo.y < win_height:
                 torpedo.y -= 10
             else:
                 torpedos.pop(torpedos.index(torpedo))
 
         for bomb in bombs:
-            logging.debug("bombx = {}, bomby = {}".format(bomb.lodka_x, bomb.lodka_y))
+            logging.debug("bombx = {}, bomby = {}".format(lodka_x, lodka_y))
             logging.debug("x = {}, y = {}".format(lodka_x, lodka_y))
-            if (bomb.lodka_x < lodka_x + lodka_width) \
-                    and (bomb.lodka_x > lodka_x) \
-                    and (bomb.lodka_y > lodka_y) \
-                    and (bomb.lodka_y < lodka_y + lodka_height):
-
+            if lodka_x < bomb.x < lodka_x + lodka_width and lodka_y < bomb.y < lodka_y + lodka_height:
                 logging.info('submarine was killed')
                 # pygame.mixer.music.load("music/expl.mp3")
                 # pygame.mixer.music.play(1, 0)
-                lodka_alive = 0
+                submarine_alive = False
                 win.fill(currentColor)
                 break
-            elif bomb.lodka_y > win_height:
+            elif bomb.y > win_height:
                 logging.info('bomb was popped')
                 bombs.pop(bombs.index(bomb))
 
@@ -158,8 +146,8 @@ while run:
                 enemies.pop(planes.index(plane))
 
         for bomb in bombs:
-            if bomb.lodka_y < win_height:
-                bomb.lodka_y += bomb.vel
+            if bomb.y < win_height:
+                bomb.y += bomb.vel
                 # logging.info("we moved bomb")
             else:
                 bombs.pop(bombs.index(bomb))
@@ -179,24 +167,33 @@ while run:
             # launch torpedo
             torpedos.append(
                 Torpedo(
-                    x = round(lodka_x + lodka_width // 2),
-                    y = round(lodka_y + lodka_height // 2),
-                    object_type = 'ordinary'
+                    x=round(lodka_x + lodka_width // 2),
+                    y=round(lodka_y + lodka_height // 2),
+                    object_type='regular'
                 )
             )
         if keys[pygame.K_o]:
-            # create Enemy
+            # create a regular Enemy
             # logging.info("we added enemy to list")
-            enemies.append(Enemy_Ship(20, 87, 'ordinary'))
+            enemies.append(Enemy_Ship(20, horizont_level, 'regular'))
         if keys[pygame.K_f]:
-            # create Enemy
+            # create a fast Enemy
             # logging.info("we added enemy to list")
-            enemies.append(Enemy_Ship(20, 87, 'fast'))
+            enemies.append(Enemy_Ship(20, horizont_level, 'fast'))
         if keys[pygame.K_p]:
-            # create Plane
+            # create a Plane
             logging.info("we added plane to list")
             planes.append(Plane(win_width - 10, 10))
 
-        drawWindow()
+        draw_window()
+
+    else:
+        # GAME OVER BLOCK
+        win.fill(currentColor)
+        win.blit(game_over_text, (5, 480))
+        pygame.display.update()
+        time.sleep(3)
+        run = False
+        break
 
 pygame.quit()

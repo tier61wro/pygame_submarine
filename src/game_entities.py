@@ -18,6 +18,14 @@ class DrawableObject:
             # Стандартная отрисовка, если спрайт не задан
             pygame.draw.rect(win, (0, 0, 0), (self.x, self.y, 2, 5))
 
+class Submarine(DrawableObject):
+    def __init__(self, x: int, y: int, sprite):
+        super().__init__(x, y, sprite)
+        self.vel = 10
+        self.width = 130
+        self.height = 39
+        self.alive = True
+
 
 class Torpedo(DrawableObject):
     def __init__(self, x: int, y: int, object_type: str, sprite=None):
@@ -58,17 +66,18 @@ class Plane:
             pygame.mixer.music.load(file)
             pygame.mixer.music.set_volume(0.1)
             pygame.mixer.music.play()
-            bombs.append(Bomb(self.x + self.width / 2, self.y + self.height, 'ordinary'))
+            bombs.append(Bomb(self.x + self.width / 2, self.y + self.height, 'regular'))
         return bombs
 
 
 class Enemy_Ship(DrawableObject):
-    def __init__(self, x, y, object_type='ordinary'):
+    def __init__(self, x, y, object_type='regular'):
         super().__init__(x, y)
         self.object_type = object_type
-        self.size = 30
+        self.height = 40
+        self.y = self.y - self.height
+        self.width = 130
         self.vel = 5
-        self.size = 130
         if object_type == 'fast':  # fast
             self.vel = 10
 
