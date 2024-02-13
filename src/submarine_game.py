@@ -5,8 +5,8 @@ from typing import List
 
 import pygame
 
-from game_entities import Enemy_Ship, Plane, Torpedo, Submarine
-from graphic import lodkaStand
+from game_entities import Enemy_Ship, Plane, Submarine, Torpedo
+from graphic import submarineStand
 
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 clock = pygame.time.Clock()
@@ -42,7 +42,7 @@ myfont = pygame.font.SysFont("monospace", 16)
 clock = pygame.time.Clock()
 BLACK = (0, 0, 0)
 
-submarine = Submarine(round(win_width/2), 425, lodkaStand)
+submarine = Submarine(round(win_width / 2), 425, submarineStand)
 
 horizont_level = 165
 
@@ -86,7 +86,7 @@ while run:
     disclaimer_text = myfont.render("Round 1", 1, (0, 0, 0))
     game_over_text = myfont.render("GAME OVER", 1, (0, 0, 0))
     score_text = myfont.render(f"Score {score}", 1, (0, 0, 0))
-    reload_text = myfont.render(f"Reloading in 3", 1, (0, 0, 0))
+    reload_text = myfont.render("Reloading in 3", 1, (0, 0, 0))
     currentColor = (255, 255, 255)
 
     if submarine.alive:
@@ -95,7 +95,7 @@ while run:
         win.blit(disclaimer_text, (5, 480))
         win.blit(score_text, (5, 10))
         win.blit(reload_text, (win_width - 150, win_height - 20))
-        win.blit(lodkaStand, (submarine.x, submarine.y))
+        win.blit(submarineStand, (submarine.x, submarine.y))
         pygame.draw.line(win, BLACK, (0, horizont_level), (win_width, horizont_level), 1)
 
         for torpedo in torpedos:
@@ -157,7 +157,7 @@ while run:
             # launch torpedo
             torpedos.append(
                 Torpedo(
-                    x=round(submarine.x + submarine.width // 2),
+                    x=round(submarine.x + submarine.rocket_launcher_point),
                     y=round(submarine.y + submarine.height // 2),
                     object_type='regular'
                 )
