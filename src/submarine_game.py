@@ -5,7 +5,7 @@ from typing import List
 
 import pygame
 
-from game_entities import Enemy_Ship, Plane, Torpedo
+from game_entities import Enemy_Ship, Plane, Torpedo, Submarine
 from graphic import lodkaStand
 
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,13 +42,7 @@ myfont = pygame.font.SysFont("monospace", 16)
 clock = pygame.time.Clock()
 BLACK = (0, 0, 0)
 
-# submarine params
-lodka_x = 50
-lodka_y = 425
-lodka_width = 130
-lodka_height = 39
-lodka_speed = 10
-submarine_alive = True
+submarine = Submarine(round(win_width/2), 425, lodkaStand)
 
 horizont_level = 165
 
@@ -91,23 +85,23 @@ while run:
 
     disclaimer_text = myfont.render("Round 1", 1, (0, 0, 0))
     game_over_text = myfont.render("GAME OVER", 1, (0, 0, 0))
-    score_text = myfont.render("Score {0}".format(score), 1, (0, 0, 0))
-    reload_text = myfont.render("Reloading in {0}".format('3'), 1, (0, 0, 0))
+    score_text = myfont.render(f"Score {score}", 1, (0, 0, 0))
+    reload_text = myfont.render(f"Reloading in 3", 1, (0, 0, 0))
     currentColor = (255, 255, 255)
 
-    if submarine_alive:
+    if submarine.alive:
         # The game continues.
         draw_bg()
         win.blit(disclaimer_text, (5, 480))
         win.blit(score_text, (5, 10))
         win.blit(reload_text, (win_width - 150, win_height - 20))
-        win.blit(lodkaStand, (lodka_x, lodka_y))
+        win.blit(lodkaStand, (submarine.x, submarine.y))
         pygame.draw.line(win, BLACK, (0, horizont_level), (win_width, horizont_level), 1)
 
         for torpedo in torpedos:
             for enemy in enemies:
                 if torpedo.y < horizont_level and enemy.x < torpedo.x < enemy.x + enemy.width:
-                    logging.info('enemy was killed')
+                    logging.info('Enemy was killed')
                     score += 1
                     enemies.pop(enemies.index(enemy))
 
@@ -117,13 +111,10 @@ while run:
                 torpedos.pop(torpedos.index(torpedo))
 
         for bomb in bombs:
-            logging.debug("bombx = {}, bomby = {}".format(lodka_x, lodka_y))
-            logging.debug("x = {}, y = {}".format(lodka_x, lodka_y))
-            if lodka_x < bomb.x < lodka_x + lodka_width and lodka_y < bomb.y < lodka_y + lodka_height:
+            logging.debug(f"submarine = {submarine.x}, submarine = {submarine.y}")
+            if submarine.x < bomb.x < submarine.x + submarine.width and submarine.y < bomb.y < submarine.y + submarine.height:
                 logging.info('submarine was killed')
-                # pygame.mixer.music.load("music/expl.mp3")
-                # pygame.mixer.music.play(1, 0)
-                submarine_alive = False
+                submarine.alive = False
                 win.fill(currentColor)
                 break
             elif bomb.y > win_height:
@@ -132,7 +123,6 @@ while run:
 
         for enemy in enemies:
             if enemy.x < win_width and enemy.y > 0:
-                # logging.info("we moved enemy")
                 enemy.x += enemy.vel
             else:
                 enemies.pop(enemies.index(enemy))
@@ -155,20 +145,20 @@ while run:
         # pygame.display.update()
         keys = pygame.key.get_pressed()
 
-        if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and lodka_x > 0:
-            lodka_x -= lodka_speed
-        if (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and lodka_x < win_width - lodka_width - 5:
-            lodka_x += lodka_speed
-        if (keys[pygame.K_UP] or keys[pygame.K_w]) and lodka_y > 5:
-            lodka_y -= lodka_speed
-        if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and lodka_y < win_height - lodka_height - 5:
-            lodka_y += lodka_speed
+        if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and submarine.x > 0:
+            submarine.x -= submarine.vel
+        if (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and submarine.x < win_width - submarine.width - 5:
+            submarine.x += submarine.vel
+        if (keys[pygame.K_UP] or keys[pygame.K_w]) and submarine.y > 5:
+            submarine.y -= submarine.vel
+        if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and submarine.y < win_height - submarine.height - 5:
+            submarine.y += submarine.vel
         if keys[pygame.K_SPACE]:
             # launch torpedo
             torpedos.append(
                 Torpedo(
-                    x=round(lodka_x + lodka_width // 2),
-                    y=round(lodka_y + lodka_height // 2),
+                    x=round(submarine.x + submarine.width // 2),
+                    y=round(submarine.y + submarine.height // 2),
                     object_type='regular'
                 )
             )

@@ -18,6 +18,7 @@ class DrawableObject:
             # Стандартная отрисовка, если спрайт не задан
             pygame.draw.rect(win, (0, 0, 0), (self.x, self.y, 2, 5))
 
+
 class Submarine(DrawableObject):
     def __init__(self, x: int, y: int, sprite):
         super().__init__(x, y, sprite)
