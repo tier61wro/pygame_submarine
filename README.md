@@ -48,6 +48,7 @@ python main.py
 ## Development
 
 This game was developed using Python and Pygame. It features custom graphics, collision detection, and a scoring system. The main loop handles game rendering, input processing, and physics updates.
+Unit tests inside
 
 ## Logging
 
