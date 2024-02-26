@@ -149,7 +149,7 @@ while run:
             submarine.x -= submarine.vel
         if (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and submarine.x < win_width - submarine.width - 5:
             submarine.x += submarine.vel
-        if (keys[pygame.K_UP] or keys[pygame.K_w]) and submarine.y > 5:
+        if (keys[pygame.K_UP] or keys[pygame.K_w]) and submarine.y > horizont_level - submarine.height / 2 - 5:
             submarine.y -= submarine.vel
         if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and submarine.y < win_height - submarine.height - 5:
             submarine.y += submarine.vel
